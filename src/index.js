@@ -11,6 +11,42 @@ const project_form = document.getElementById('project_form');
 let todos = [];
 let projects = [];
 
+class Project {
+    constructor(project_title){
+        this.project_title = project_title;
+    }
+}
+
+add_project.addEventListener('click', ()=>{
+    project_dialog.show();
+})
+
+project_close.addEventListener('click', ()=>{
+    project_dialog.close();
+})
+
+project_form.addEventListener('submit', (event)=>{
+    event.preventDefault();
+
+    const project_title = document.getElementById('project_title').value;
+    const project_object = new Project(project_title);
+    projects.push(project_object);
+    updateProjectSelect();
+    project_dialog.close();
+    console.log(projects);
+})
+
+function updateProjectSelect(){
+    const project_options = document.getElementById('project');
+
+    projects.forEach(project => {
+        const option = document.createElement('option');
+        option.value = project.project_title;
+        option.textContent = project.project_title;
+        console.log(option);
+        project_options.appendChild(option);
+    })
+}
 class Todo {
     constructor(title, description, date, project, priority){
         this.title = title;
@@ -18,12 +54,6 @@ class Todo {
         this.date = date;
         this.project = project;
         this.priority = priority;
-    }
-}
-
-class Project {
-    constructor(project_title){
-        this.project_title = project_title;
     }
 }
 
@@ -50,20 +80,3 @@ task_form.addEventListener('submit', (event)=>{
 })
 console.log(todos);
 
-add_project.addEventListener('click', ()=>{
-    project_dialog.show();
-})
-
-project_close.addEventListener('click', ()=>{
-    project_dialog.close();
-})
-
-project_form.addEventListener('submit', (event)=>{
-    event.preventDefault();
-
-    const project_title = document.getElementById('project_title').value;
-    const project_object = new Project(project_title);
-    projects.push(project_object);
-    project_dialog.close();
-    console.log(projects);
-})
