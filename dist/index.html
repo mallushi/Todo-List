@@ -5,6 +5,65 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script defer src="main.js"></script></head>
     <body>
-        <div>hello</div>
+        <header>
+            <div>
+                To-do List
+            </div>
+        </header>
+        <sidebar>
+            <button id="add_project">Add Project</button>
+            <dialog id="project_dialog">
+                <form id="project_form">
+                    <label for="project_title">Title of project</label><br>
+                    <input type="text" id="project_title" name="project">
+                    <div>
+                        <input type="submit" value="Save">
+                        <button id="project_close">Cancel</button>
+                    </div>
+                </form>
+            </dialog>
+        </sidebar>
+        <section>
+            <button id="add_task">Add Task</button>
+            <dialog id="task_dialog">
+                <form id="task_form">
+                    <div>
+                        <label for="title">Title*</label><br>
+                        <input type="text" id="title" name="title"><br><br>
+                    </div>
+                    <div>
+                        <label for="description">Description (optional)</label><br>
+                        <textarea id="description" name="description" rows="4" cols="30"></textarea><br><br>
+                    </div>
+                    <div>
+                        <label for="date">Due Date*</label><br>
+                        <input type="date" id="date" name="date"><br><br>
+                    </div>
+                    <div>
+                        <label for="project">Select a project</label><br>
+                        <select id="project" name="project"></select><br>
+                    </div>
+                    <div>
+                        <p>Priority</p>
+                        <input type="radio" id="low" name="priority_radio" value="low">
+                        <label for="low">Low</label>
+                        <input type="radio" id="medium" name="priority_radio" value="medium">
+                        <label for="medium">Medium</label>
+                        <input type="radio" id="high" name="priority_radio" value="high">
+                        <label for="high">High</label>
+                    </div>
+                    <div>
+                        <input type="submit" value="Save">
+                        <button id="task_close">Cancel</button>
+                    </div>
+
+                </form>
+            </dialog>
+        </section>
+        <footer>
+            <div>
+                <a href="https://github.com/mallushi">migi-the-dev</a>
+            </div>
+        </footer>
     </body>
 </html>
