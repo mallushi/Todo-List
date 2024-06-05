@@ -1,4 +1,5 @@
 import './style.css';
+import addProjectDisplay from './project_display';
 const task_dialog = document.getElementById('task_dialog');
 const project_dialog = document.getElementById('project_dialog');
 const add_task = document.getElementById('add_task');
@@ -10,7 +11,6 @@ const project_form = document.getElementById('project_form');
 
 let todos = [];
 let projects = [];
-
 class Project {
     constructor(project_title){
         this.project_title = project_title;
@@ -31,6 +31,7 @@ project_form.addEventListener('submit', (event)=>{
     const project_title = document.getElementById('project_title').value;
     const project_object = new Project(project_title);
     projects.push(project_object);
+    addProjectDisplay(projects);
     updateProjectSelect();
     project_dialog.close();
     console.log(projects);
