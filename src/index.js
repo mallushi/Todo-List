@@ -1,5 +1,6 @@
 import './style.css';
 import addProjectDisplay from './project_display';
+import addTaskDisplay from './task_display';
 const task_dialog = document.getElementById('task_dialog');
 const project_dialog = document.getElementById('project_dialog');
 const add_task = document.getElementById('add_task');
@@ -9,12 +10,32 @@ const task_close = document.getElementById('task_close');
 const task_form = document.getElementById('task_form');
 const project_form = document.getElementById('project_form');
 
-let todos = [];
-let projects = [];
+let todos = JSON.parse(localStorage.getItem("taskdata")) || [];
+let projects = JSON.parse(localStorage.getItem("projectdata")) || [];
 class Project {
     constructor(project_title){
         this.project_title = project_title;
     }
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+    addProjectDisplay(projects);
+    addTaskDisplay(todos);
+    updateProjectSelect();
+})
+
+const resetTaskForm = ()=>{
+    document.getElementById('title').value = "";
+    document.getElementById('description').value = "";
+    document.getElementById('date').value = "";
+    document.querySelector('#project').value = "";
+    document.querySelector('input[name="priority_radio"]:checked').value = "";
+    task_dialog.close();
+}
+
+const resetProjectForm = ()=>{
+    document.getElementById('project_title').value = "";
+    project_dialog.close();
 }
 
 add_project.addEventListener('click', ()=>{
@@ -23,6 +44,7 @@ add_project.addEventListener('click', ()=>{
 
 project_close.addEventListener('click', ()=>{
     project_dialog.close();
+    resetProjectForm();
 })
 
 project_form.addEventListener('submit', (event)=>{
@@ -31,10 +53,11 @@ project_form.addEventListener('submit', (event)=>{
     const project_title = document.getElementById('project_title').value;
     const project_object = new Project(project_title);
     projects.push(project_object);
+    localStorage.setItem("projectdata", JSON.stringify(projects));
     addProjectDisplay(projects);
     updateProjectSelect();
-    project_dialog.close();
-    console.log(projects);
+    resetProjectForm();
+    //console.log(projects);
 })
 
 function updateProjectSelect(){
@@ -44,7 +67,7 @@ function updateProjectSelect(){
         const option = document.createElement('option');
         option.value = project.project_title;
         option.textContent = project.project_title;
-        console.log(option);
+        //console.log(option);
         project_options.appendChild(option);
     })
 }
@@ -64,6 +87,7 @@ add_task.addEventListener('click', ()=>{
 
 task_close.addEventListener('click', ()=>{
     task_dialog.close();
+    resetTaskForm();
 })
 
 task_form.addEventListener('submit', (event)=>{
@@ -77,7 +101,8 @@ task_form.addEventListener('submit', (event)=>{
 
     const to_do = new Todo(title, description, date, project, priority);
     todos.push(to_do);
-    task_dialog.close();
+    localStorage.setItem("taskdata", JSON.stringify(todos));
+    addTaskDisplay(todos);
+    resetTaskForm();
 })
 console.log(todos);
-
