@@ -12,6 +12,10 @@ const project_form = document.getElementById('project_form');
 
 let todos = JSON.parse(localStorage.getItem("taskdata")) || [];
 let projects = JSON.parse(localStorage.getItem("projectdata")) || [];
+let isEditingProject = false;
+let currentEditingProjectIndex = -1;
+let isEdit = false;
+let currentEditingIndex = -1;
 class Project {
     constructor(project_title){
         this.project_title = project_title;
@@ -29,21 +33,25 @@ const resetTaskForm = ()=>{
     document.getElementById('description').value = "";
     document.getElementById('date').value = "";
     document.querySelector('#project').value = "";
-    document.querySelector('input[name="priority_radio"]:checked').value = "";
+    document.querySelector('input[name="priority_radio"]:checked').checked = false;
     task_dialog.close();
+    isEdit = false;
 }
 
 const resetProjectForm = ()=>{
     document.getElementById('project_title').value = "";
     project_dialog.close();
+    isEditingProject = false;
+    currentEditingProjectIndex = -1;
 }
 
 add_project.addEventListener('click', ()=>{
+    resetProjectForm();
     project_dialog.show();
 })
 
 project_close.addEventListener('click', ()=>{
-    project_dialog.close();
+    //project_dialog.close();
     resetProjectForm();
 })
 
@@ -52,7 +60,11 @@ project_form.addEventListener('submit', (event)=>{
 
     const project_title = document.getElementById('project_title').value;
     const project_object = new Project(project_title);
-    projects.push(project_object);
+    if (isEditingProject && currentEditingProjectIndex !== -1) {
+        projects[currentEditingProjectIndex] = project_object;
+    } else {
+        projects.unshift(project_object);
+    }
     localStorage.setItem("projectdata", JSON.stringify(projects));
     addProjectDisplay(projects);
     updateProjectSelect();
@@ -62,6 +74,7 @@ project_form.addEventListener('submit', (event)=>{
 
 function updateProjectSelect(){
     const project_options = document.getElementById('project');
+    project_options.innerHTML = "";
 
     projects.forEach(project => {
         const option = document.createElement('option');
@@ -100,7 +113,13 @@ task_form.addEventListener('submit', (event)=>{
     const priority = document.querySelector('input[name="priority_radio"]:checked').value;
 
     const to_do = new Todo(title, description, date, project, priority);
-    todos.push(to_do);
+    
+    if(isEdit){
+        todos[currentEditingIndex] = to_do;
+    }else{
+        todos.unshift(to_do);
+    }
+    
     localStorage.setItem("taskdata", JSON.stringify(todos));
     addTaskDisplay(todos);
     resetTaskForm();
