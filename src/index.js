@@ -18,13 +18,14 @@ let isEdit = false;
 let currentEditingIndex = -1;
 class Project {
     constructor(project_title){
+        this.id = Date.now().toString();
         this.project_title = project_title;
     }
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
     addProjectDisplay(projects);
-    addTaskDisplay(todos);
+    addTaskDisplay(todos, isEdit= false, currentEditingIndex = null);
     updateProjectSelect();
 })
 
@@ -69,7 +70,6 @@ project_form.addEventListener('submit', (event)=>{
     addProjectDisplay(projects);
     updateProjectSelect();
     resetProjectForm();
-    //console.log(projects);
 })
 
 function updateProjectSelect(){
@@ -78,18 +78,17 @@ function updateProjectSelect(){
 
     projects.forEach(project => {
         const option = document.createElement('option');
-        option.value = project.project_title;
+        option.value = project.id;
         option.textContent = project.project_title;
-        //console.log(option);
         project_options.appendChild(option);
     })
 }
 class Todo {
-    constructor(title, description, date, project, priority){
+    constructor(title, description, date, projectId, priority){
         this.title = title;
         this.description = description;
         this.date = date;
-        this.project = project;
+        this.projectId = projectId;
         this.priority = priority;
     }
 }
@@ -109,10 +108,10 @@ task_form.addEventListener('submit', (event)=>{
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
     const date = document.getElementById('date').value;
-    const project = document.querySelector('#project').value;
+    const projectId = document.querySelector('#project').value;
     const priority = document.querySelector('input[name="priority_radio"]:checked').value;
 
-    const to_do = new Todo(title, description, date, project, priority);
+    const to_do = new Todo(title, description, date, projectId, priority);
     
     if(isEdit){
         todos[currentEditingIndex] = to_do;
@@ -121,7 +120,7 @@ task_form.addEventListener('submit', (event)=>{
     }
     
     localStorage.setItem("taskdata", JSON.stringify(todos));
-    addTaskDisplay(todos);
+    addTaskDisplay(todos, isEdit= false, currentEditingIndex = null);
     resetTaskForm();
 })
-console.log(todos);
+console.log("this is full array:",todos);
