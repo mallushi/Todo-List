@@ -44,3 +44,18 @@ img{
 a{
     text-decoration: none;
 }
+
+.project_container{
+    margin: 10px;
+    display: flex;
+    justify-content: space-between;
+    background-color: beige;
+    padding: 10px;
+    border-style: solid;
+    border-color: brown;
+    border-radius: 5px;
+}
+
+.task_container{
+    margin: 15px;
+}
