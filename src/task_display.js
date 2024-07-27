@@ -1,68 +1,69 @@
-export default function addTaskDisplay(todos, isEdit, currentEditingIndex){
-    const task_display = document.getElementById('task_display');
-    task_display.innerHTML = '';
-    const groupedTodos = todos.reduce((acc, todo) => {
-        const key = todo.project;
-        if (!acc[key]) {
-            acc[key] = [];
+export default function addTaskDisplay(todos, isEdit= false, currentEditingIndex = null){
+    const project_display = document.getElementById('project_display');
+
+    project_display.addEventListener('click', function(e) {
+        if (e.target.closest('.project_container')) {
+            const projectid = e.target.getAttribute('data-id'); // Use data-id to store project ID
+            console.log("Clicked project ID:", projectid);
+            displayTodosByProject(projectid);
         }
-        acc[key].push(todo);
-        return acc;
-    }, {});
-    
-    Object.keys(groupedTodos).forEach(project => {
-        const tasksHTML = groupedTodos[project].map((todo, index) => `
-            <li>
-                <strong>Title:</strong> ${todo.title} <br>
-                <strong>Description:</strong> ${todo.description} <br>
-                <strong>Date:</strong> ${todo.date} <br>
-                <strong>Priority:</strong> ${todo.priority}
-            </li>
-            <button>View</button>
-            <button class="edit_task" data-project="${project}" data-index="${index}">Edit</button>
-            <button class="delete_task" data-project="${project}" data-index="${index}">Delete</button>
-        `).join('');
-        const projectHTML = `
-            <div>
-                <h3>${project}</h3>
-                <ul>${tasksHTML}</ul>
-            </div>
-        `;
-        task_display.innerHTML += projectHTML;
     });
 
-    document.querySelectorAll('.delete_task').forEach(button => {
-        button.addEventListener('click', (e)=>{
-            const project = e.target.getAttribute('data-project');
-            const index = e.target.getAttribute('data-index');
-            deleteTask(todos, project, index);
-        });
-    });
+    function displayTodosByProject(projectid) {
+        console.log("this is todos:",todos)
+        const filteredTodos = todos.filter(todo => todo.projectId === projectid);
+        console.log("Filtered todos:", filteredTodos);
+        const task_display = document.getElementById('task_display');
+        task_display.innerHTML = '';
 
-    document.querySelectorAll('.edit_task').forEach(task_button=> {
-        task_button.addEventListener('click', (e)=>{
-            const index = e.target.getAttribute('data-index');
-            const project = e.target.getAttribute('data-project');
-            editTask(todos, project, index);
+        filteredTodos.forEach((todo, index) => {
+            const tasksHTML =`
+                <li>
+                    <strong>Title:</strong> ${todo.title} <br>
+                    <strong>Description:</strong> ${todo.description} <br>
+                    <strong>Date:</strong> ${todo.date} <br>
+                    <strong>Priority:</strong> ${todo.priority}
+                </li>
+                <button>View</button>
+                <button class="edit_task" data-project="${todo.projectId}" data-index="${index}">Edit</button>
+                <button class="delete_task" data-project="${todo.projectId}" data-index="${index}">Delete</button>
+            `
+            task_display.innerHTML += tasksHTML;
         })
-    })
+
+        document.querySelectorAll('.delete_task').forEach(button => {
+            button.addEventListener('click', (e)=>{
+                const project = e.target.getAttribute('data-project');
+                const index = e.target.getAttribute('data-index');
+                deleteTask(project, index);
+            });
+        });
+
+        document.querySelectorAll('.edit_task').forEach(task_button=> {
+            task_button.addEventListener('click', (e)=>{
+                const index = e.target.getAttribute('data-index');
+                const project = e.target.getAttribute('data-project');
+                editTask(project, index);
+            })
+        })
+    };
 };
 
 function deleteTask(todos,project, index){
     index = parseInt(index);
-    todos = todos.filter((todo, i) => !(todo.project === project && i === index));
+    todos = todos.filter((todo, i) => !(todo.projectId == project && i === index));
     localStorage.setItem("taskdata", JSON.stringify(todos));
     addTaskDisplay(todos);
 };
 
-function editTask(todos, project, index, isEdit, currentEditingIndex) {
+function editTask(todos, project, index) {
     index = parseInt(index);
-    const currentTask = todos.filter((todo, i) => todo.project === project && i === index)[0];
+    const currentTask = todos.filter((todo, i) => todo.projectId == project && i === index)[0];
     
     document.getElementById('title').value = currentTask.title;
     document.getElementById('description').value = currentTask.description;
     document.getElementById('date').value = currentTask.date;
-    document.querySelector('#project').value = currentTask.project;
+    document.querySelector('#project').value = currentTask.projectId;
     
     document.querySelectorAll('input[name="priority_radio"]').forEach(radio => {
         if (radio.value === currentTask.priority) {
@@ -84,7 +85,7 @@ function editTask(todos, project, index, isEdit, currentEditingIndex) {
         currentTask.priority = document.querySelector('input[name="priority_radio"]:checked').value;
 
         localStorage.setItem("taskdata", JSON.stringify(todos));
-        addTaskDisplay(todos);
+        displayTodosByProject(currentTask.projectId);
         task_dialog.close();
-    })
+    }, {once: true});
 };
