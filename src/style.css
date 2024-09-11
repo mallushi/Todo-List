@@ -15,6 +15,9 @@ body{
 header{ 
     grid-area: header;
     background-color: rgb(98, 101, 184);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 sidebar{ 
@@ -57,5 +60,24 @@ a{
 }
 
 .task_container{
-    margin: 15px;
+    margin: 10px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    background-color: beige;
+    border-style: solid;
+    border-radius: 5px;
+    border-color: blue;
+}
+
+.title{
+    font-size: 50px;
+}
+
+#add_project, .h1_add_project{
+    margin: 10px;
+}
+
+#add_task, .h1_add_task{
+    margin: 10px;
 }
