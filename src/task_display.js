@@ -18,47 +18,68 @@ export default function addTaskDisplay(todos, isEdit= false, currentEditingIndex
 
         filteredTodos.forEach((todo, index) => {
             const tasksHTML =`
-                <li>
+            <div class="task_container">
+                <ul>
                     <strong>Title:</strong> ${todo.title} <br>
-                    <strong>Description:</strong> ${todo.description} <br>
                     <strong>Date:</strong> ${todo.date} <br>
-                    <strong>Priority:</strong> ${todo.priority}
-                </li>
-                <button>View</button>
-                <button class="edit_task" data-project="${todo.projectId}" data-index="${index}">Edit</button>
-                <button class="delete_task" data-project="${todo.projectId}" data-index="${index}">Delete</button>
+                    <div class="hidden_content" style="display: none;">
+                        <strong>Description:</strong> ${todo.description} <br>
+                        <strong>Priority:</strong> ${todo.priority} <br>
+                    </div>
+                </ul>
+                <div class="buttons_div">
+                    <button class="view_task" data-project="${todo.projectId}" data-index="${index}">View</button>
+                    <button class="edit_task" data-project="${todo.projectId}" data-index="${index}">Edit</button>
+                    <button class="delete_task" data-project="${todo.projectId}" data-index="${index}">Delete</button>
+                </div>
+            </div>
             `
             task_display.innerHTML += tasksHTML;
         })
 
         document.querySelectorAll('.delete_task').forEach(button => {
             button.addEventListener('click', (e)=>{
-                const project = e.target.getAttribute('data-project');
+                const projectId = e.target.getAttribute('data-project');
                 const index = e.target.getAttribute('data-index');
-                deleteTask(project, index);
+                deleteTask(projectId, index);
             });
         });
 
         document.querySelectorAll('.edit_task').forEach(task_button=> {
             task_button.addEventListener('click', (e)=>{
                 const index = e.target.getAttribute('data-index');
-                const project = e.target.getAttribute('data-project');
-                editTask(project, index);
+                const projectId = e.target.getAttribute('data-project');
+                editTask(projectId, index);
             })
         })
+
+        document.querySelectorAll('.view_task').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const taskContainer = event.target.closest('.task_container');
+                const hiddenContent = taskContainer.querySelector('.hidden_content');
+        
+                if (hiddenContent.style.display === 'none') {
+                    hiddenContent.style.display = 'block';  
+                    event.target.textContent = 'Hide';      
+                } else {
+                    hiddenContent.style.display = 'none';  
+                    event.target.textContent = 'View';     
+                }
+            });
+        });
     };
 };
 
-function deleteTask(todos,project, index){
+function deleteTask(projectId, index){
     index = parseInt(index);
-    todos = todos.filter((todo, i) => !(todo.projectId == project && i === index));
+    todos = todos.filter((todo, i) => !(todo.projectId === projectId && i === index));
     localStorage.setItem("taskdata", JSON.stringify(todos));
-    addTaskDisplay(todos);
+    displayTodosByProject(projectId);
 };
 
-function editTask(todos, project, index) {
+function editTask(projectId, index) {
     index = parseInt(index);
-    const currentTask = todos.filter((todo, i) => todo.projectId == project && i === index)[0];
+    const currentTask = todos[index];
     
     document.getElementById('title').value = currentTask.title;
     document.getElementById('description').value = currentTask.description;
